@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>写博客页面</title>
+<link rel="stylesheet" th:href="@{/jquery-easyui-1.4.5/themes/icon.css}" />
+<link rel="stylesheet" th:href="@{/jquery-easyui-1.4.5/themes/default/easyui.css}" />
+</head>
+<body style="margin:10;">
+<div id="p" class="easyui-panel" title="编写博客" style="padding: 10px;margin-right: 50px;width: 80%;" fit="true" overflow="hidden" >
+		<table cellspacing="20px" style="width: 90%">
+			<tr>
+				<td width="80px">博客标题：</td>
+				<td>
+					<input name="id" id="id" hidden="true" />
+					<input type="text" id="title" name="title" style="width: 400px"/>
+				</td>
+			</tr>
+			<tr>
+				<td>所属类别：</td>
+				<td>
+					<select class="easyui-combobox" style="width: 154px" id="blogTypeId" name="blogType.id" editable="false" panelHeight="auto">
+						<option value="">请选择博客类别...</option>
+						<ul th:each="blogType:${application.blogTypeCountList }">
+							<option th:value="${blogType.id }"><span th:text="${blogType.typeName }"></span></option>
+						</ul>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td valign="top">博客内容：</td>
+				<td>
+					<textarea name="editor" id="editor"  rows="60" cols="160"  />
+				</td>
+			</tr>
+			<tr>
+				<td>关键字：</td>
+				<td>
+					<input type="text" id="keyWord" name="keyWord" style="width: 400px;"/>&nbsp;(多个关键字中间用空格隔开)
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<a href="javascript:submitData()" class="easyui-linkbutton" data-options="iconCls:'icon-ok'">发布博客</a>
+				</td>
+			</tr>
+		</table>
+</div>
+<script th:src="@{/jquery-easyui-1.4.5/jquery.min.js}"></script>
+<script th:src="@{/jquery-easyui-1.4.5/jquery.easyui.min.js}"></script>
+<script th:src="@{/jquery-easyui-1.4.5/locale/easyui-lang-zh_CN.js}"></script>
+<script th:src="@{/ckeditor/ckeditor.js}" />
+<script th:src="@{/ckfinder/ckfinder.js}" />
+<!-- 实例化编辑器 -->
+<script th:inline="javascript">
+/*<![CDATA[  */
+	CKEDITOR.replace( 'editor' );
+ 	CKEDITOR.instances["editor"].on("instanceReady", function () {    
+          this.document.on("paste", Paste);   
+          //更新博客,加载数据
+          if ([[${id}]]!=null) {
+        	//通过ajax请求数据
+        	 $.ajax({
+                    type   : 'POST',
+                    async  : false,	//同步加载
+                    url    : '/cc/blog/findById.html',
+                    data   : {'id':[[${id}]]},
+                    success: function (result) {
+                    	var result=eval('('+result+')');	//将json字符串转化为json对象
+                    	$('#id').val(result.id);
+          				$('#title').val(result.title);
+          				$('#keyWord').val(result.keyWord);
+          				$('#blogTypeId').combobox('select',result.blogType.id);
+          				CKEDITOR.instances.editor.setData(result.content);  
+                    }
+        	 });
+         }	
+    });   
+ 	
+	function Paste(e){  
+	  var items = e.data.$.clipboardData.items;  
+	    
+	  for (var i = 0; i < items.length; ++i) {  
+	      var item = e.data.$.clipboardData.items[i];  
+	        
+	      if (items[i].kind == 'file' && items[i].type == 'image/png') {  
+			//FileReader可以参考<p>API  
+	          var fileReader = new FileReader();  
+	          var thImageUrl;
+	          var replaceText;
+	          fileReader.readAsDataURL(item.getAsFile());  
+	          //readAsDataURL是一个异步过程，这里提供回调方法  
+	          fileReader.onloadend = function () {  
+				  var imgTemp=this.result;
+	              var d = imgTemp.substr( this.result.indexOf(',')+1);  
+	              //往ckeditor中插入图片,base64编码过的  	
+	              //CKEDITOR.instances.editor.insertHtml("<img src='data:image/jpeg;base64,"+d+"' />");
+	              //上传到服务器
+	              	//通过ajax请求数据
+		        	 $.ajax({
+		                    type   : 'POST',
+		                    async  : false,	//同步加载
+		                    url    : '/cc/blog/uploadPastImage.html',
+		                    data   : {'image':d},
+		                    success: function (imageUrl) {
+		                    thImageUrl="<img src=\""+imageUrl+"\" ></img> ";
+		                    CKEDITOR.instances.editor.insertHtml(thImageUrl);
+	                    /* 	//替换图片路径	
+		      	            var text=CKEDITOR.instances.editor.getData();   
+	                    	//匹配图片（g表示匹配所有结果i表示区分大小写）
+	                    	var imgReg = /<img.*?(?:>|\/>)/gi;
+	                    	var arr = text.match(imgReg);
+	                    	console.log('正则匹配'+arr);
+	                    	replaceText=text.replace(arr,thImageUrl); */
+	                    }
+		        	 });
+	          };  
+	          break;   
+	      }  
+	    }  
+	}  
+	/* ]]> */
+</script>
+<script type="text/javascript">
+function submitData(){
+	var id=$('#id').val();	
+	var title=$("#title").val();
+	var blogTypeId=$("#blogTypeId").combobox("getValue");
+	var ckeditor=CKEDITOR.instances.editor;
+	var content=ckeditor.getData();
+	var contentNoTag=ckeditor.document.getBody().getText();
+	var summary=contentNoTag.substr(0,180);
+	var keyWord=$("#keyWord").val();
+	if(title==null || title==''){
+		alert("请输入标题！");
+	}else if(blogTypeId==null || blogTypeId==''){
+		alert("请选择博客类别！");
+	}else if(content==null || content==''){
+		alert("请填写内容！");
+	}else{
+		 $.post("/cc/blog/save.html",{'id':id,'title':title,'blogType.id':blogTypeId,
+			'contentNoTag':contentNoTag,
+			'content':content,'summary':summary,'keyWord':keyWord},function(result){
+			if(result.success){
+				alert(result.message);
+				resultValue();
+			}else{
+				alert("操作失败!");
+			}
+		},"json");  
+	}
+}
+
+function resultValue(){
+	$("#title").val("");
+	$("#blogTypeId").combobox("setValue","");
+	CKEDITOR.instances.editor.setData('');
+	$("#keyWord").val("");
+}
+</script>
+</body>
+</html>

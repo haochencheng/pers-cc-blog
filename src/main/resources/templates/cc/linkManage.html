@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>友情链接页面</title>
+<link rel="stylesheet" th:href="@{/jquery-easyui-1.4.5/themes/default/easyui.css}" />
+<link rel="stylesheet" th:href="@{/jquery-easyui-1.4.5/themes/icon.css}" />
+</head>
+<body style="margin: 1px;">
+<table id="dg" title="博客管理" class="easyui-datagrid" 
+  fitColumns="true" pagination="true" rownumbers="true" 
+  url="/cc/link/list.html" fit="true" toolbar="#tb">
+	<thead>
+		<tr>
+	  		<th field="cb" checkbox="true" align="center"></th>
+	  		<th field="id" width="20" align="center">编号</th>
+	  		<th field="linkName" width="200" align="center">友情链接名称</th>
+	  		<th field="linkUrl" width="200" align="center">友情链接地址</th>
+	  		<th field="orderNo" width="50" align="center">排序序号</th>
+  		</tr>
+	</thead>
+</table>
+<div id="tb">
+	<div>
+		<a href="javascript:openAddListDialog()" class="easyui-linkbutton" iconCls="icon-add" plain='true'>添加</a>
+		<a href="javascript:openModifyBlogDialog()" class="easyui-linkbutton" iconCls="icon-edit" plain='true'>修改</a>
+		<a href="javascript:deleteList()" class="easyui-linkbutton" iconCls="icon-remove" plain='true'>删除</a>
+	</div>
+</div>
+<div id="dlg" class="easyui-dialog" style="width: 500px;height: 200px;padding: 10px 20px;" closed="true" buttons="#dlg-buttons">
+	<form id="fm" method="post">
+		<table cellspacing="8px">
+			<tr>
+				<td>友情链接名称：</td>
+				<td>
+					<input type="text" id="linkName" name="linkName" class="easyui-validatebox" required="true" />
+				</td>
+			</tr>
+			<tr>
+				<td>友情链接地址：</td>
+				<td>
+					<input type="text" id="linkUrl" name="linkUrl" class="easyui-validatebox" validtype='url' required="true" style="width: 250px;" />
+				</td>
+			</tr>
+			<tr>
+				<td>排序序号：</td>
+				<td>
+					<input type="text" class="easyui-numberbox" id="orderNo" name="orderNo" required="true" style="width: 60px;" />&nbsp;(友情链接根据序号从小到大排序)
+				</td>
+			</tr>
+		</table>
+	</form>
+</div>
+<div id="dlg-buttons">
+	<a href="javascript:saveList()" class="easyui-linkbutton" iconCls="icon-ok" >保存</a>
+	<a href="javascript:closeTypeDialog()" class="easyui-linkbutton" iconCls="icon-no" >关闭</a>
+</div>
+<script th:src="@{/jquery-easyui-1.4.5/jquery.min.js}"></script>
+<script th:src="@{/jquery-easyui-1.4.5/jquery.easyui.min.js}"></script>
+<script th:src="@{/jquery-easyui-1.4.5/locale/easyui-lang-zh_CN.js}"></script>
+<script type="text/javascript">
+/*<![CDATA[  */
+	var url;
+	function openAddListDialog(){
+		$('#dlg').dialog('open').dialog('setTitle','添加友情链接').dialog('center');
+		url='/cc/link/save.html';
+	}
+	
+	function openModifyBlogDialog(){
+		var SelectedRows=$('#dg').datagrid('getSelections');
+		if(SelectedRows.length!=1){
+			$.messager.alert('系统提示','请选择一条要修改的友情链接!');
+			return;
+		}
+		var row=SelectedRows[0];
+		$('#dlg').dialog('open').dialog('setTitle','修改友情链接').dialog('center');
+		$('#fm').form('load',row);
+		url='/cc/link/save.html?id='+row.id;
+	}
+	
+	function saveList(){
+		$('#fm').form('submit',{
+			url:url,
+			onSubmit:function(){
+				return $(this).form('validate');
+			},
+			success: function(result){
+				var result=eval('('+result+')');
+				if(result.success){
+					$.messager.alert('系统提示','保存成功!');
+					resertValue();
+					$('#dlg').dialog('close');
+					$('#dg').datagrid('reload');
+				}else{
+					$.messager.alert('系统提示','保存失败!');
+					return;
+				}
+			}
+		});
+	}
+	
+	function deleteList(){
+		var SelectedRows=$('#dg').datagrid('getSelections');
+		if(SelectedRows.length==0){
+			$.messager.alert('系统提示','请选择要删除的友情链接!');
+			return;
+		}
+		var strIds=[];
+		for(var i=0;i<SelectedRows.length;i++){
+			strIds.push(SelectedRows[i].id);
+		}
+		var ids=strIds.join(",");
+		$.messager.confirm('系统提示','您确定要删除这<font color="red">'+SelectedRows.length+'</font>条友情链接么!',function(r){
+			if(r){
+				$.post('/cc/link/delete.html', {ids:ids}, function(result) {
+					if(result.success){
+						$.messager.alert('系统提示','友情链接已成功删除!');
+						$('#dg').datagrid('reload');
+					}else{
+						$.messager.alert('系统提示','友情链接删除失败!');
+					}
+				},'JSON');
+			}
+		});
+	}
+
+	function resertValue(){
+		$('#linkName').val('');
+		$('#linkUrl').val('');
+		$('#orderNo').val('');
+	}
+	/* ]]> */
+</script>
+</body>
+</html>

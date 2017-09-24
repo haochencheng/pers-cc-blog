@@ -1,0 +1,56 @@
+<div class="data_list" >
+	<!-- <div class="data_list_title">
+		<img th:src="@{/images/list_icon.png}" />
+	</div> -->
+	<div class="widget d_tag"> 
+		  		  	<h3 class="widget_tit">最新博客</h3> 
+	</div>
+	<div class="datas">
+		<ul>
+			<div class="excerpt" th:each="blog:${blogList }">
+				<li style="margin-bottom: 25px;margin-top:10px;"><span class="date">
+				<!-- 标题 -->
+				<span class="title">
+				<a th:href="'/blog/articles/'+@{${blog.id}}+'.html'" target="_blank"><span th:text="${blog.title }" ></span>
+					<!-- 关键字 -->
+				<header class="label label-important" th:each="keyword:${#strings.listSplit(blog.keyWord,' ')}"  >
+	  		  			<a  th:href="'/blog/articles/'+@{${blog.id}}+'.html'" target="_blank"><label  th:text="${keyword}" style="color: #fff;"/></a>
+  		  		</header>		
+				</a></span></span>
+				<a  th:href="'/blog/articles/'+@{${blog.id}}+'.html'" target="_blank">
+					<div>发表于  
+						  <span th:text="${#calendars.format(blog.releaseDate,'yyyy-MM-dd HH:mm:ss')}"></span>
+						阅读(<span th:text="${blog.clickHit }"></span>)
+							评论(<span th:text="${blog.replyHit }"></span>)
+					</div>
+				</a>
+				<!-- <a
+						th:href="'/blog/articles/'+@{${blog.id}}+'.html'" target="_blank">
+								  <span th:text="${#calendars.format(blog.releaseDate,'yyyy年MM月dd日')}"></span>
+								</a> -->
+					<a th:href="'/blog/articles/'+@{${blog.id}}+'.html'" target="_blank">
+						<span
+					class="summary"><span style="font-weight: bold">摘要：</span><span th:text="${blog.summary }"></span>...</span>
+					<span class="img">
+					<span th:each="image: ${blog.imageList }" >
+							<a th:href="'/blog/articles/'+@{${blog.id}}+'.html'" target="_blank">
+								<span th:utext="${image}" ></span> 
+							</a>
+				  		&nbsp;&nbsp;
+			  		</span></span>
+					</a>
+					
+				</li>
+				<!-- <hr
+					style="height: 5px; border: none; border-top: 1px dashed gray; padding-bottom: 10px;" /> -->
+			</div>
+		</ul>
+	</div>
+</div>
+
+<div class="pagecode" th:include="/foreground/common/page::#list" />
+
+
+
+
+

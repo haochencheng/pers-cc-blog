@@ -1,0 +1,16 @@
+<header class="row navbar navbar-inverse navbar-fixed-top site-navbar" style="height: 60px;">
+    <div class="col-md-2 logo" style="margin-top: 6px;">
+            <a th:href="@{/index.html}">
+                <img  th:src="@{/images/logo.png}" style="height: 50px;" th:alt-title="cc个人博客系统" />
+            </a>
+    </div>
+    <div class="col-md-8 " >
+         <div th:include="/foreground/common/menu" ></div>
+          <div class="personalized" >
+            <a th:href="@{/index.html}" ><span >for myself : </span><span  th:text="${application.blogger.personalized }" style="">&nbsp;&nbsp;&nbsp;</span></a>
+        </div>
+    </div>
+    <div class="col-md-12" style="margin-top: -20px;">
+       
+   	</div>
+</header>

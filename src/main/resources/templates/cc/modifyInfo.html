@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>修改个人信息</title>
+<link rel="stylesheet" th:href="@{/jquery-easyui-1.4.5/themes/icon.css}" />
+<link rel="stylesheet" th:href="@{/jquery-easyui-1.4.5/themes/default/easyui.css}" />
+</head>
+<body style="margin:10;">
+<div id="p" class="easyui-panel" title="修改个人信息" fit="true">
+	<form id="form1" method="post" enctype="multipart/form-data">
+		<table cellspacing="20px">
+			<tr>
+				<td>用户名：</td>
+				<td>
+					<input type="hidden" id="id" name="id" th:value="${session.currentUser.id}" />
+					<input type="text" id="userName" name="userName"  style="width: 200px" readonly="readonly" th:value="${session.currentUser.userName }"/>
+				</td>
+			</tr>
+			<tr>
+				<td>昵称：</td>
+				<td>
+					<input type="text" id="nickName" name="nickName" th:value="${session.currentUser.nickName}" style="width: 200px" />
+				</td>
+			</tr>
+				<tr>
+				<td>logo签名：</td>
+				<td>
+					<input type="text" id="personalized" name="personalized" th:value="${session.currentUser.personalized}" style="width: 500px" />
+				</td>
+			</tr>
+			<tr>
+				<td>个性签名：</td>
+				<td>
+					<input type="text" id="sign" name="sign" th:value="${session.currentUser.sign}" style="width: 500px" />
+				</td>
+			</tr>
+			<tr>
+				<td>个人头像：</td>
+				<td>
+					<input type="file" id="imageFile" name="imageFile" />
+				</td>
+			</tr>
+			<tr>
+				<td valign="top">个人简介：</td>
+				<td>
+					<textarea name="editor" id="editor"  rows="60" cols="160"  />
+					<input id="pF" name="profile" hidden="true" />
+				</td>
+			</tr>
+			<tr>
+			<td></td>
+			<td>
+				<a href="javascript:submitData()" class="easyui-linkbutton" data-options="iconCls:'icon-submit'">提交</a>
+			</td>
+		</tr>
+		</table>
+	</form>
+</div>
+<script th:src="@{/jquery-easyui-1.4.5/jquery.min.js}"></script>
+<script th:src="@{/jquery-easyui-1.4.5/jquery.easyui.min.js}"></script>
+<script th:src="@{/jquery-easyui-1.4.5/locale/easyui-lang-zh_CN.js}"></script>
+<script th:src="@{/ckeditor/ckeditor.js}" />
+<script th:src="@{/ckfinder/ckfinder.js}" />
+<!-- 实例化编辑器 -->
+<script th:inline="javascript">
+/*<![CDATA[  */
+	CKEDITOR.replace( 'editor' );
+	
+    $(function() {
+       	CKEDITOR.instances.editor.setData([[${session.currentUser.profile}]]);
+	})
+    
+	function submitData(){
+		var nickName=$('#nickName').val();
+		var personalized=$('#personalized').val();
+		var sign=$('#sign').val();
+		var profile=CKEDITOR.instances.editor.getData();
+		if(nickName==null ||nickName==''){
+			alert('请输入昵称！');
+		}else if(personalized==null ||personalized==''){
+			alert('请输入logo签名！');
+		}else if(sign==null ||sign==''){
+			alert('请输入个性签名！');
+		}else if(profile==null ||profile==''){
+			alert('请输入个人简介！');
+		}else{
+			$('#pF').val(profile);
+			//$('#form1').submit();
+			$('#form1').form('submit',{
+				url:'/cc/blogger/save.html',
+				success: function(result){
+					var result=eval('('+result+')');
+					if(result.status==1){
+						alert('修改成功!');
+						
+					}else{
+						$.messager.alert('系统提示','修改失败!');
+						return;
+					}
+				}
+			});
+		}
+	}
+	/* ]]> */
+
+</script>
+</body>
+</html>

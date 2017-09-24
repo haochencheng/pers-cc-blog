@@ -1,0 +1,134 @@
+<link rel="stylesheet" th:href="@{/SyntaxHighlighter/shCoreDefault.css}" />
+<div class="data_list">
+	<div class="data_list_title">
+		<img th:src="@{/images/blog_show_icon.png}" />
+		博客信息
+	</div>
+	<div>
+		<div class="blog_title"><h3><strong th:text="${blog.title }"></strong></h3></div>
+		<!-- <div class="blog_share">
+			<h4>\(^o^)/~>分享功能</h4>
+		</div> -->
+		<div class="blog_info">
+			发布时间：『 <span th:text="${#calendars.format(blog.releaseDate,'yyyy-MM-dd HH:mm:ss')} "></span>』&nbsp;&nbsp;博客类别：<span th:text="${blog.blogType.typeName }"></span>&nbsp;&nbsp;阅读(<span th:text="${blog.clickHit }"></span>) 评论(<span th:text="${blog.replyHit }"></span>)
+		</div>
+		<hr  color="#987cb9" size="10" />
+		<div class="blog_content" th:utext="${blog.content }">
+		
+		</div>
+		<div class="blog_keyWord">
+			<font><strong>关键字：</strong></font>
+			<span th:if="${keyWords }==null">
+				&nbsp;&nbsp;无
+			</span>
+			<span th:if="${keyWords }!=null" th:each="keyWord:${keyWords }">
+				&nbsp;&nbsp;&nbsp;&nbsp;<a th:href="@{/blog/q.html(q=${keyWord})}"   th:text="${keyWord}"></a>&nbsp;&nbsp;
+			</span>
+		</div>
+		<div class="blog_lastAndNextPage" th:utext="${pageCode}" />
+	</div>
+</div>
+
+<div class="data_list">
+	<div class="data_list_title">
+		<img th:src="@{/images/comment_icon.png}"/>
+		评论信息
+		<div th:if="${commentList.size()}&gt;10 ">
+			<a href="javascript:showOtherComment()" style="float: right;padding-right: 40px;">显示所有评论</a>
+		</div>
+	</div>
+	<div class="commentDatas">
+		<div th:if="${commentList.size() }==0">
+			暂无评论
+		</div>
+		<div th:if="${commentList.size() }!=0" th:each="comment,iter:${commentList}">
+		    <div th:if="${iter.index} &lt;10">
+				<div class="comment">
+					<span><font th:text="${iter.index+1 }">楼&nbsp;&nbsp;&nbsp;&nbsp;<span th:text="${comment.userIp }"></span>：</font><span th:text="${comment.content }"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<span th:text="${#calendars.format(comment.commentDate ,'yyyy-MM-dd HH:mm:ss')}"></span>&nbsp;]</span>			
+				</div>
+			</div>
+			<div th:if="${iter.index} &gt;10">
+				<div class="otherComment">
+					<span><font th:text="${iter.index+1 }">楼&nbsp;&nbsp;&nbsp;&nbsp;<span th:text="${comment.userIp }"></span>：</font><span th:text="${comment.content }"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<span th:text="${#calendars.format(comment.commentDate ,'yyyy-MM-dd HH:mm:ss')}"></span>&nbsp;]</span>			
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--<div class="data_list" >
+	<div class="data_list_title">
+		<img th:src="@{/images/publish_comment_icon.png}"/>
+		发表评论
+	</div>
+	<div class="publish_comment">
+		<form action="">
+			<div>
+				<textarea style="width: 100%" rows="3" id="content" name="content" placeholder="来说两句吧..."></textarea>
+			</div>
+			<div class="verCode">
+				验证码：
+			</div>
+			<div class="publishButton">
+				<button class="btn btn-primary" type="button" onclick="submitData()">发表评论</button>
+			</div>
+	 
+		</form>
+	</div>
+</div>-->
+
+ <!--SyntaxHighlighter的基本脚本-->  
+    <script type="text/javascript" th:src="@{/SyntaxHighlighter/shCore.js}"></script>  
+  	<script type="text/javascript">
+  		 SyntaxHighlighter.all();
+	</script>
+    <!--SyntaxHighlighter的对各个编程语言解析的脚本-->  
+   <script type="text/javascript" th:src="@{/SyntaxHighlighter/shBrushBash.js}"></script>  
+    <script type="text/javascript" th:src="@{/SyntaxHighlighter/shBrushCss.js}"></script>  
+    <script type="text/javascript" th:src="@{/SyntaxHighlighter/shBrushJava.js}"></script> 
+    <script type="text/javascript" th:src="@{/SyntaxHighlighter/shBrushJavaFX.js}"></script> 
+    <script type="text/javascript" th:src="@{/SyntaxHighlighter/shBrushJScript.js}"></script> 
+    <script type="text/javascript" th:src="@{/SyntaxHighlighter/shBrushPowerShell.js}"></script> 
+    <script type="text/javascript" th:src="@{/SyntaxHighlighter/shBrushPython.js}"></script> 
+    <script type="text/javascript" th:src="@{/SyntaxHighlighter/shBrushSql.js}"></script> 
+    <script type="text/javascript" th:src="@{/SyntaxHighlighter/shBrushXml.js}"></script> 
+<script type="text/javascript">
+
+	$(function() {
+		$('p').removeClass();
+		$('p').attr('color','#fff');
+	});
+
+    function showOtherComment(){
+    	$(".otherComment").show();
+    }
+    
+    function loadimage(){
+	}
+    
+    function submitData(){
+    	var content=$("#content").val();
+    	var imageCode=$("#imageCode").val();
+    	if(content==null || content==""){
+    		alert("请输入评论内容！");
+    	}else{
+    		$.post("/comment/save.html",{"content":content,'imageCode':imageCode,'blog.id':'${blog.id}'},function(result){
+    			if(result.success){
+    				alert("评论已提成成功，审核通过后显示！");
+    				document.getElementById("imageCode").value="";
+    				document.getElementById("content").value="";
+    			}else{
+    				alert(result.errorInfo);
+    			}
+    		},"json");
+    	}
+    }
+    
+    function searchWithKeyWord(keyWord) {
+		 $.post("/blog/q.html",
+				{"q":keyWord},"json"
+		); 
+	}
+    
+</script>    
+

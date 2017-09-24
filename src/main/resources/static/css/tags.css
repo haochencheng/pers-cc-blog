@@ -1,0 +1,88 @@
+﻿.tags {
+	padding: 12px 13px 10px -15px;
+	margin-left:-37px;
+}
+
+.tags a:nth-child(9n) {
+	background-color: #4A4A4A;
+}
+
+.tags a:nth-child(9n+1) {
+	background-color: #33BBBA;
+}
+
+.tags a:nth-child(9n+2) {
+	background-color: #5CB85C;
+}
+
+.tags a:nth-child(9n+3) {
+	background-color: #D9534F;
+}
+
+.tags a:nth-child(9n+4) {
+	background-color: #567E95;
+}
+
+.tags a:nth-child(9n+5) {
+	background-color: #B433FF;
+}
+
+.tags a:nth-child(9n+6) {
+	background-color: #00ABA9;
+}
+
+.tags a:nth-child(9n+7) {
+	background-color: #B37333;
+}
+
+.tags a:nth-child(9n+8) {
+	background-color: #FF6600;
+}
+
+.tags a {
+	opacity: 0.80;
+	filter: alpha(opacity = 80);
+	color: #fff;
+	background-color: #33BBBA;
+	display: inline-block;
+	margin: 0 5px 5px 0;
+	padding: 0 6px;
+	line-height: 21px
+}
+
+.tags a:hover {
+	opacity: 1;
+	filter: alpha(opacity = 100);
+}
+
+.d_postlist li a {
+	padding: 10px 15px 10px 105px;
+	border-bottom: solid 1px #eee;
+	border-left: 3px solid transparent;
+	margin-left: -3px;
+	overflow: hidden;
+	position: relative;
+	display: block;
+	font-size: 14px
+}
+
+
+/* list tabs */
+.excerpt header .label {
+    margin-right: 5px;
+    position: relative;
+}
+
+.label-important, .badge-important {
+	margin-left:15px;
+    background-color: #d9534f;
+}
+
+
+
+
+
+
+
+
+

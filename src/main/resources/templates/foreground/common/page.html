@@ -1,0 +1,109 @@
+<!-- list分页 -->
+<nav id="list">
+	<ul th:if="${page.totalPages}&gt;0" class="pagination pagination-sm" >
+		<!-- 首页 -->
+		<li th:if="${page.currentPage}&gt;3" class="page-item">
+			<a th:href="@{${typeId}==null?'/index.html?page=1':'/index.html?page=1&amp;typeId='+${typeId}}"  class="page-link"  style="background-color: #333333;"  aria-label="Previous">
+				<span aria-hidden="true">首页</span>
+			</a>
+		</li>
+		<!-- 上一页 -->
+		<li class="page-item" data-th-classappend="${page.currentPage}==1 ? 'disabled' : ''">
+			<a th:href="${page.currentPage}&gt;1?@{${typeId}==null?'/index.html?page='+${page.currentPage-1}:'/index.html?page='+${page.currentPage-1}+'&amp;typeId='+${typeId}}:'javascript:void(0)'" class="page-link" style="background-color: #333333;" data-th-attr="pageIndex=${page.currentPage} - 1" aria-label="Previous">
+				<span aria-hidden="true">«</span>
+			</a>
+		</li>
+		<!-- 迭代生成页码 -->	
+		<li th:if="${page.totalPages}&gt;5" >
+			<li th:if="${page.currentPage}&lt;${page.totalPages}-2" class="page-item" data-th-each="i : ${page.currentPage}&lt;4?${#numbers.sequence(1, 5)}:${#numbers.sequence(page.currentPage-2, page.currentPage+2)}" 
+				data-th-classappend="${(page.currentPage) eq i} ? 'active' : ''" >
+				<a class="page-link" style="background-color: #333333;" data-th-attr="pageIndex=${i} - 1"  th:href="@{${typeId}==null?'/index.html?page='+${i}:'/index.html?page='+${i}+'&amp;typeId='+${typeId}}" >
+		             <span data-th-text="${i}"></span>
+		        </a>
+			</li>
+			<li th:if="${page.currentPage}&gt;${page.totalPages}-3" class="page-item" data-th-each="i :${#numbers.sequence(page.totalPages-4, page.totalPages)}" 
+				data-th-classappend="${(page.currentPage) eq i} ? 'active' : ''" >
+				<a class="page-link" style="background-color: #333333;" data-th-attr="pageIndex=${i} - 1"  th:href="@{${typeId}==null?'/index.html?page='+${i}:'/index.html?page='+${i}+'&amp;typeId='+${typeId}}" >
+		             <span data-th-text="${i}"></span>
+		        </a>
+			</li>
+		</li>
+		<li th:if="${page.totalPages}&lt;5" >
+			<li  class="page-item" data-th-each="i : ${#numbers.sequence(1, page.totalPages)}" 
+				data-th-classappend="${(page.currentPage) eq i} ? 'active' : ''" >
+				<a class="page-link" style="background-color: #333333;" data-th-attr="pageIndex=${i} - 1"  th:href="@{${typeId}==null?'/index.html?page='+${i}:'/index.html?page='+${i}+'&amp;typeId='+${typeId}}" >
+		             <span data-th-text="${i}"></span>
+		        </a>
+			</li>
+		</li>
+		<!-- 下一页 -->
+		<li class="page-item" data-th-classappend="${page.currentPage}==${page.totalPages} ? 'disabled' : ''">
+			<a th:href="${page.currentPage}&lt;${page.totalPages}?@{${typeId}==null?'/index.html?page='+${page.currentPage+1}:'/index.html?page='+${page.currentPage+1}+'&amp;typeId='+${typeId}}:'javascript:void(0)'" class="page-link" style="background-color: #333333;" data-th-attr="pageIndex=${page.currentPage+ 1} " aria-label="Next">
+				<span aria-hidden="true">»</span>
+			</a>
+		</li>
+		<li th:if="${page.currentPage}&lt;(${page.totalPages}-2)" class="page-item">
+			<a  th:href="@{${typeId}==null?'/index.html?page='+${page.totalPages}:'/index.html?page='+${page.totalPages}+'&amp;typeId='+${typeId}}" class="page-link" style="background-color: #333333;"  aria-label="Previous">
+				<span aria-hidden="true">尾页</span>
+			</a>
+		</li>
+	</ul>
+	<ul th:if="${page.totalPages}==0 or ${page}==null" class="pagination pagination-sm" >
+		<span aria-hidden="true" style="font-size: 16px;">没有博客了...</span>
+	</ul>
+</nav>
+
+<!-- 查询分页 -->
+<nav id="q">
+	<ul th:if="${page.totalPages}&gt;0" class="pagination pagination-sm" >
+		<!-- 首页 -->
+		<li th:if="${page.currentPage}&gt;3" class="page-item">
+			<a href="/blog//q.html?page=1+'&amp;q='+${q}" class="page-link" style="background-color: #333333;"  aria-label="Previous">
+				<span aria-hidden="true">首页</span>
+			</a>
+		</li>
+		<!-- 上一页 -->
+		<li class="page-item" data-th-classappend="${page.currentPage}==1 ? 'disabled' : ''">
+			<a th:href="${page.currentPage}&gt;1?@{'/blog/q.html?page='+${page.currentPage-1}+'&amp;q='+${q}}:'javascript:void(0)'" class="page-link" style="background-color: #333333;" data-th-attr="pageq=${page.currentPage} - 1" aria-label="Previous">
+				<span aria-hidden="true">«</span>
+			</a>
+		</li>
+		<!-- 迭代生成页码 -->	
+		<li th:if="${page.totalPages}&gt;5" >
+			<li th:if="${page.currentPage}&lt;${page.totalPages}-2" class="page-item" data-th-each="i : ${page.currentPage}&lt;4?${#numbers.sequence(1, 5)}:${#numbers.sequence(page.currentPage-2, page.currentPage+2)}" 
+				data-th-classappend="${(page.currentPage) eq i} ? 'active' : ''" >
+				<a class="page-link" style="background-color: #333333;" data-th-attr="pageq=${i} - 1"  th:href="@{'/blog/q.html?page='+${i}+'&amp;q='+${q}}" >
+		             <span data-th-text="${i}"></span>
+		        </a>
+			</li>
+			<li th:if="${page.currentPage}&gt;${page.totalPages}-3" class="page-item" data-th-each="i :${#numbers.sequence(page.totalPages-4, page.totalPages)}" 
+				data-th-classappend="${(page.currentPage) eq i} ? 'active' : ''" >
+				<a class="page-link" style="background-color: #333333;" data-th-attr="pageq=${i} - 1"  th:href="@{'/blog/q.html?page='+${i}+'&amp;q='+${q}}" >
+		             <span data-th-text="${i}"></span>
+		        </a>
+			</li>
+		</li>
+		<li th:if="${page.totalPages}&lt;5" >
+			<li  class="page-item" data-th-each="i : ${#numbers.sequence(1, page.totalPages)}" 
+				data-th-classappend="${(page.currentPage) eq i} ? 'active' : ''" >
+				<a class="page-link" style="background-color: #333333;" data-th-attr="pageq=${i} - 1"  th:href="@{'/blog/q.html?page='+${i}+'&amp;q='+${q}}" >
+		             <span data-th-text="${i}"></span>
+		        </a>
+			</li>
+		</li>
+		<!-- 下一页 -->
+		<li class="page-item" data-th-classappend="${page.currentPage}==${page.totalPages} ? 'disabled' : ''">
+			<a th:href="${page.currentPage}&lt;${page.totalPages}?@{'/blog//q.html?page='+${page.currentPage+1}+'&amp;q='+${q}}:'javascript:void(0)'" class="page-link" style="background-color: #333333;" data-th-attr="pageq=${page.currentPage+ 1} " aria-label="Next">
+				<span aria-hidden="true">»</span>
+			</a>
+		</li>
+		<li th:if="${page.currentPage}&lt;(${page.totalPages}-2)" class="page-item">
+			<a  th:href="@{'/blog/q.html?page='+${page.totalPages}+'&amp;q='+${q}}" class="page-link" style="background-color: #333333;"  aria-label="Previous">
+				<span aria-hidden="true">尾页</span>
+			</a>
+		</li>
+	</ul>
+	<ul th:if="${page.totalPages}==0" class="pagination pagination-sm" >
+		<span aria-hidden="true" style="font-size: 16px;">没有博客了...</span>
+	</ul>
+</nav>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title th:text="${pageTitle }" />
+</head>
+<style type="text/css">
+	body {
+	padding-top: 10px;
+	padding-bottom: 40px;
+}
+</style>
+<link rel="Shortcut Icon" type="image/x-icon" th:href="@{/images/favicon.ico}" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" th:href="@{/bootstrap3/css/bootstrap.min.css}" />
+<link rel="stylesheet" th:href="@{/bootstrap3/css/bootstrap-theme.min.css}" />
+<link rel="stylesheet" th:href="@{/css/blog.css}" charset="utf-8"/>
+<link rel="stylesheet" th:href="@{/css/tags.css}" charset="utf-8"/>
+<script th:src="@{/bootstrap3/js/jquery-1.11.2.min.js}" ></script>
+<script th:src="@{/bootstrap3/js/bootstrap.min.js}" ></script>
+<body >
+<div th:include="/foreground/common/head" ></div>
+<div class="container">
+	<div class="row">
+	  <div class="col-md-8" >
+	  	
+	  	 <div  th:if="${mainPage}!=null">
+	  	 	 <div  th:include="${mainPage}"></div>
+	  	 </div>
+	  </div>
+	  <div th:object="${application}" >
+		  <div class="col-md-4" >
+	          <div class="data_list">
+	             <!--  <div class="data_list_title">
+	                   <a th:href="@{/blogger/aboutMe.html}"><img  th:src="@{/images/user_icon.png}" th:alt-title="博主信息" /></a>
+	                  博主信息
+	              </div>
+	              <div class="user_image">
+	                  <a th:href="@{/blogger/aboutMe.html}"><img th:src="@{'/userImages/'+*{blogger.imageName}}" src="/static/userImages/20161003114717.jpg" alt="一只程序猿"/></a>
+	              </div>
+	              <a th:href="@{/blogger/aboutMe.html}"><div class="nickName" th:text="${application.blogger.nickName}" /></a>
+	              <a th:href="@{/blogger/aboutMe.html}"><div class="userSign">(<span th:text="*{blogger.sign }"></span>)</div></a> -->
+		  		  <!-- 日志类别 -->
+		  		  <div class="widget d_tag"> 
+		  		  	<h3 class="widget_menu">日志类别</h3> 
+		  		  	<ul class="nopic" > 
+		  		  		<div class="tags" >
+			  		  			<a th:each="blogTypeCount:*{blogTypeCountList}" th:href="@{'/index.html?typeId='+${blogTypeCount.id}}"><span th:text="${blogTypeCount.typeName }"></span>&nbsp;(<span th:text="${blogTypeCount.blogCount }"></span>)</a>
+		  		  		</div>
+		  		  	</ul> 
+		  		  </div>
+		  			<!-- 友情链接 -->
+		  		   <div class="widget d_tag"> 
+		  		  	<h3 class="widget_tit">友情链接</h3> 
+		  		  	<ul class="nopic" > 
+		  		  		<div class="tags" >
+			  		  			<a  th:each="link:*{linkList }" th:href="@{link.linkUrl }"><span th:text="${link.linkName }"></span></a>
+		  		  		</div>
+		  		  	</ul> 
+		  		  </div>
+			</div>
+	
+			</div>	
+	  	</div>
+  	</div>
+	<div th:include="/foreground/common/foot" />
+</div>
+</body>
+</html>
+
